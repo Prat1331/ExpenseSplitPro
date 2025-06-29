@@ -58,8 +58,9 @@
 
 @layer base {
   * {
-    @apply border-border;
-  }
+  border-color: var(--border);
+  @apply border;
+}
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
