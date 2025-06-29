@@ -4,12 +4,13 @@ import { Receipt, Camera, Users, Smartphone, CreditCard, CheckCircle } from "luc
 
 export default function Landing() {
   const handleSignIn = () => {
-    window.location.href = "/api/login";
-  };
+  window.location.href = "http://localhost:5001/api/login";
+};
 
-  const handleGetStarted = () => {
-    window.location.href = "/api/login";
-  };
+const handleGetStarted = () => {
+  window.location.href = "http://localhost:5001/api/login";
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
