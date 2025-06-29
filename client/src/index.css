@@ -1,0 +1,191 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(38, 92%, 50%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+  
+  /* SplitEase specific colors */
+  --primary-orange: hsl(38, 92%, 50%);
+  --primary-orange-dark: hsl(38, 92%, 45%);
+  --success-green: hsl(142, 76%, 36%);
+  --danger-red: hsl(0, 84%, 60%);
+  --gray-50: hsl(210, 40%, 98%);
+  --gray-900: hsl(220, 13%, 18%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(38, 92%, 50%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  /* Mobile-first container */
+  .mobile-container {
+    @apply max-w-md mx-auto bg-white min-h-screen relative;
+  }
+
+  /* Custom gradient for balance card */
+  .balance-gradient {
+    background: linear-gradient(135deg, hsl(38, 92%, 50%) 0%, hsl(45, 93%, 47%) 100%);
+  }
+
+  /* Camera viewfinder styles */
+  .camera-overlay {
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  /* Scan frame animation */
+  @keyframes scan-line {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+  }
+
+  .scan-line {
+    animation: scan-line 2s linear infinite;
+  }
+}
+
+@layer components {
+  /* Navigation active state */
+  .nav-item-active {
+    @apply text-primary;
+  }
+
+  .nav-item-inactive {
+    @apply text-gray-400;
+  }
+
+  /* Bill item cards */
+  .bill-item-card {
+    @apply bg-white border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow;
+  }
+
+  /* Friend item cards */
+  .friend-item {
+    @apply flex items-center justify-between p-4 bg-white rounded-xl border border-gray-100 shadow-sm;
+  }
+
+  /* Transaction indicators */
+  .transaction-positive {
+    @apply text-green-600;
+  }
+
+  .transaction-negative {
+    @apply text-red-600;
+  }
+
+  .transaction-neutral {
+    @apply text-gray-600;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary hover:opacity-90 transition-colors;
+  }
+
+  .btn-secondary {
+    @apply bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors;
+  }
+
+  /* Loading states */
+  .loading-spinner {
+    @apply animate-spin rounded-full border-b-2 border-primary;
+  }
+
+  /* Camera controls */
+  .camera-control {
+    @apply bg-black bg-opacity-50 text-white rounded-full flex items-center justify-center;
+  }
+
+  /* Scan frame corners */
+  .scan-corner {
+    @apply absolute w-6 h-6 border-primary;
+  }
+
+  .scan-corner-tl {
+    @apply top-0 left-0 border-t-4 border-l-4 rounded-tl-lg;
+  }
+
+  .scan-corner-tr {
+    @apply top-0 right-0 border-t-4 border-r-4 rounded-tr-lg;
+  }
+
+  .scan-corner-bl {
+    @apply bottom-0 left-0 border-b-4 border-l-4 rounded-bl-lg;
+  }
+
+  .scan-corner-br {
+    @apply bottom-0 right-0 border-b-4 border-r-4 rounded-br-lg;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(60, 4.8%, 95.9%);
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(38, 92%, 50%);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(38, 92%, 45%);
+}
+
+/* Focus styles */
+input:focus, button:focus {
+  outline: 2px solid hsl(38, 92%, 50%);
+  outline-offset: 2px;
+}
