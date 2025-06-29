@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-const API_KEY = process.env.GEMINI_API_KEY || "AIzaSyDJEOwgYfC1MWF-X4cuL8D4Vri-U0cRpJU";
+const API_KEY = process.env.GEMINI_API_KEY;
 
 if (!API_KEY) {
   throw new Error("GEMINI_API_KEY environment variable is required");
