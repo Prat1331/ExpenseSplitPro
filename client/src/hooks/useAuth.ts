@@ -5,7 +5,7 @@ export function useAuth() {
     queryKey: ["/api/auth/user"],
     queryFn: async () => {
       const res = await fetch("http://localhost:5001/api/auth/user", {
-        credentials: "include", // crucial for sending cookies/session
+        credentials: "include", // ✅ send cookies
       });
 
       if (!res.ok) {
@@ -14,7 +14,7 @@ export function useAuth() {
 
       return res.json();
     },
-    retry: false, // don't retry if unauthenticated
+    retry: false,
   });
 
   return {
