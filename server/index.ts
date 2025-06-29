@@ -1,3 +1,5 @@
+import cors from "cors"
+
 import 'dotenv/config';
 console.log("✅ .env loaded | GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
 
@@ -10,8 +12,17 @@ import { setupVite, serveStatic, log } from "./vite";
 
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
 
 app.use((req, res, next) => {
   const start = Date.now();
