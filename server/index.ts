@@ -1,4 +1,6 @@
 import 'dotenv/config';
+console.log("✅ .env loaded | REPLIT_CLIENT_ID:", process.env.REPLIT_CLIENT_ID);
+
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
@@ -69,5 +71,5 @@ app.use((req, res, next) => {
     log(`serving on port ${port}`);
   });
 })();
-console.log("REPLIT_CLIENT_ID:", process.env.REPLIT_CLIENT_ID);
+
 
