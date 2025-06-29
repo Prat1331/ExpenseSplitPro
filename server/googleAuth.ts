@@ -16,6 +16,7 @@ export function setupAuth(app: Express) {
       saveUninitialized: false,
     })
   );
+
   app.use(passport.initialize());
   app.use(passport.session());
 
@@ -40,9 +41,10 @@ export function setupAuth(app: Express) {
     done(null, obj);
   });
 
-  // Routes
+  // 🔐 Login
   app.get("/api/login", passport.authenticate("google", { scope: ["profile", "email"] }));
 
+  // 🔄 Callback
   app.get(
     "/api/callback",
     passport.authenticate("google", {
@@ -51,11 +53,27 @@ export function setupAuth(app: Express) {
     })
   );
 
+  // 🚪 Logout
   app.get("/api/logout", (req, res) => {
     req.logout(() => res.redirect("/"));
   });
+
+  // ✅ Authenticated User Info
+  app.get("/api/auth/user", (req, res) => {
+    if (!req.isAuthenticated || !req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const user = req.user as any;
+    res.json({
+      name: user.displayName,
+      email: user.emails?.[0]?.value,
+      photo: user.photos?.[0]?.value,
+    });
+  });
 }
 
+// ✅ Middleware to protect routes
 export const isAuthenticated: RequestHandler = (req, res, next) => {
   if (req.isAuthenticated && req.isAuthenticated()) return next();
   res.status(401).json({ message: "Unauthorized" });
