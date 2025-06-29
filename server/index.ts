@@ -69,3 +69,5 @@ app.use((req, res, next) => {
     log(`serving on port ${port}`);
   });
 })();
+console.log("REPLIT_CLIENT_ID:", process.env.REPLIT_CLIENT_ID);
+
