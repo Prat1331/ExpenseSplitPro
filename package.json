@@ -4,11 +4,11 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-  "dev": "(for /f \"tokens=5\" %a in ('netstat -ano ^| findstr :5001') do (echo Killing PID %a && taskkill /PID %a /F)) & cross-env NODE_ENV=development tsx server/index.ts",
-  "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
-  "start": "cross-env NODE_ENV=production node dist/index.js",
-  "check": "tsc",
-  "db:push": "drizzle-kit push"
+    "dev": "(for /f \"tokens=5\" %a in ('netstat -ano ^| findstr :5001') do (echo Killing PID %a && taskkill /PID %a /F)) & cross-env NODE_ENV=development tsx server/index.ts",
+    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "start": "cross-env NODE_ENV=production node dist/index.js",
+    "check": "tsc",
+    "db:push": "drizzle-kit push"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -48,6 +48,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "connect-pg-simple": "^10.0.0",
+    "cors": "^2.8.5",
     "date-fns": "^3.6.0",
     "dotenv": "^17.0.0",
     "drizzle-orm": "^0.39.1",
