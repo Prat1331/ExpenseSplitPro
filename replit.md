@@ -84,7 +84,9 @@ The application is designed for deployment on Replit with the following characte
 ## Changelog
 
 - June 29, 2025. Initial setup
+- June 29, 2025. Added Paytm wallet integration with balance display, transaction history, and payment method selection
 
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+App Features: Show Paytm wallet balance prominently on home screen, integrate wallet payments for bill settlements.

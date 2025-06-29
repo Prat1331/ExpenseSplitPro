@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, Utensils, Edit, Send } from "lucide-react";
+import { ArrowLeft, Utensils, Edit, Send, Wallet, CreditCard } from "lucide-react";
 
 interface ExtractedBillData {
   merchantName: string;
@@ -32,9 +32,15 @@ export default function SplitBill({ billData, onClose, onBack }: SplitBillProps)
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isCreating, setIsCreating] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"paytm" | "razorpay">("paytm");
 
   const { data: friends } = useQuery({
     queryKey: ["/api/friends"],
+    retry: false,
+  });
+
+  const { data: walletBalance } = useQuery({
+    queryKey: ["/api/wallet/balance"],
     retry: false,
   });
 
@@ -230,20 +236,65 @@ export default function SplitBill({ billData, onClose, onBack }: SplitBillProps)
             )}
           </div>
           
+          {/* Payment Method Selection */}
+          <div className="mt-6">
+            <h4 className="font-semibold text-gray-900 mb-4">Payment Method</h4>
+            <div className="grid grid-cols-2 gap-3">
+              <Button
+                onClick={() => setPaymentMethod("paytm")}
+                variant={paymentMethod === "paytm" ? "default" : "outline"}
+                className={`p-4 h-auto flex flex-col items-center space-y-2 ${
+                  paymentMethod === "paytm" 
+                    ? "bg-blue-600 text-white" 
+                    : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                <Wallet size={24} />
+                <div className="text-center">
+                  <p className="font-medium">Paytm Wallet</p>
+                  <p className="text-xs opacity-75">
+                    {formatCurrency(walletBalance?.balance || 0)} available
+                  </p>
+                </div>
+              </Button>
+              
+              <Button
+                onClick={() => setPaymentMethod("razorpay")}
+                variant={paymentMethod === "razorpay" ? "default" : "outline"}
+                className={`p-4 h-auto flex flex-col items-center space-y-2 ${
+                  paymentMethod === "razorpay" 
+                    ? "bg-blue-600 text-white" 
+                    : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                <CreditCard size={24} />
+                <div className="text-center">
+                  <p className="font-medium">Card/UPI</p>
+                  <p className="text-xs opacity-75">Via Razorpay</p>
+                </div>
+              </Button>
+            </div>
+          </div>
+
           <Button
             onClick={handleSendRequests}
-            disabled={isCreating}
+            disabled={isCreating || (paymentMethod === "paytm" && (walletBalance?.balance || 0) < individualShare)}
             className="w-full btn-primary py-4 rounded-2xl font-semibold mt-6 h-auto"
           >
             {isCreating ? (
               <div className="flex items-center space-x-2">
                 <div className="loading-spinner h-4 w-4"></div>
-                <span>Creating Bill...</span>
+                <span>Processing...</span>
               </div>
+            ) : paymentMethod === "paytm" && (walletBalance?.balance || 0) < individualShare ? (
+              <>
+                <Wallet className="mr-2" size={20} />
+                Insufficient Wallet Balance
+              </>
             ) : (
               <>
-                <Send className="mr-2" size={20} />
-                Send Payment Requests
+                {paymentMethod === "paytm" ? <Wallet className="mr-2" size={20} /> : <Send className="mr-2" size={20} />}
+                {paymentMethod === "paytm" ? "Pay from Wallet" : "Send Payment Requests"}
               </>
             )}
           </Button>

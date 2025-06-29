@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Bell, Camera, QrCode, ArrowDown, ArrowUp, Users } from "lucide-react";
+import { Bell, Camera, QrCode, ArrowDown, ArrowUp, Users, RefreshCw, Wallet } from "lucide-react";
 import BillScanner from "@/components/BillScanner";
 import Navigation from "@/components/Navigation";
 
@@ -32,6 +32,11 @@ export default function Home() {
 
   const { data: balance, isLoading: balanceLoading } = useQuery({
     queryKey: ["/api/users/balance"],
+    retry: false,
+  });
+
+  const { data: walletBalance, isLoading: walletLoading, refetch: refetchWallet } = useQuery({
+    queryKey: ["/api/wallet/balance"],
     retry: false,
   });
 
@@ -73,6 +78,14 @@ export default function Home() {
     });
   };
 
+  const handleRefreshWallet = () => {
+    refetchWallet();
+    toast({
+      title: "Refreshing",
+      description: "Updating your wallet balance...",
+    });
+  };
+
   if (showScanner) {
     return <BillScanner onClose={() => setShowScanner(false)} />;
   }
@@ -100,26 +113,57 @@ export default function Home() {
       </header>
 
       <div className="p-6">
-        {/* Balance Overview */}
-        <Card className="balance-gradient text-white mb-6">
+        {/* Paytm Wallet Balance */}
+        <Card className="balance-gradient text-white mb-4">
           <CardContent className="p-6">
-            <h2 className="text-lg font-medium mb-2">Your Balance</h2>
-            <div className="flex items-baseline space-x-2 mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center space-x-2">
+                <Wallet size={20} />
+                <h2 className="text-lg font-medium">Paytm Wallet</h2>
+              </div>
+              <Button
+                onClick={handleRefreshWallet}
+                variant="ghost"
+                size="sm"
+                className="text-white hover:bg-white hover:bg-opacity-20 p-2"
+                disabled={walletLoading}
+              >
+                <RefreshCw size={16} className={walletLoading ? "animate-spin" : ""} />
+              </Button>
+            </div>
+            <div className="flex items-baseline space-x-2 mb-2">
               <span className="text-3xl font-bold">
-                {balanceLoading ? "..." : formatCurrency(Number(balance?.owed || 0) - Number(balance?.owes || 0))}
+                {walletLoading ? "..." : formatCurrency(walletBalance?.balance || 0)}
               </span>
               <span className="text-sm opacity-80">available</span>
             </div>
+            <p className="text-xs opacity-75">
+              Last updated: {walletBalance?.lastUpdated 
+                ? new Date(walletBalance.lastUpdated).toLocaleTimeString('en-IN', { 
+                    hour: 'numeric', 
+                    minute: '2-digit', 
+                    hour12: true 
+                  })
+                : "Just now"
+              }
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Split Balance Overview */}
+        <Card className="bg-white border border-gray-200 mb-6">
+          <CardContent className="p-6">
+            <h2 className="text-lg font-medium text-gray-900 mb-4">Split Balance</h2>
             <div className="flex space-x-6 text-sm">
               <div>
-                <span className="opacity-80">You owe: </span>
-                <span className="font-semibold">
+                <span className="text-gray-600">You owe: </span>
+                <span className="font-semibold text-red-600">
                   {balanceLoading ? "..." : formatCurrency(balance?.owes || 0)}
                 </span>
               </div>
               <div>
-                <span className="opacity-80">Owed to you: </span>
-                <span className="font-semibold">
+                <span className="text-gray-600">Owed to you: </span>
+                <span className="font-semibold text-green-600">
                   {balanceLoading ? "..." : formatCurrency(balance?.owed || 0)}
                 </span>
               </div>

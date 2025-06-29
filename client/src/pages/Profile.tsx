@@ -1,15 +1,17 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { User, Settings, CreditCard, HelpCircle, LogOut, Bell, Shield } from "lucide-react";
+import { User, Settings, CreditCard, HelpCircle, LogOut, Bell, Shield, Wallet } from "lucide-react";
 import Navigation from "@/components/Navigation";
+import WalletSettings from "@/components/WalletSettings";
 
 export default function Profile() {
   const { user, isLoading: authLoading } = useAuth();
   const { toast } = useToast();
+  const [showWalletSettings, setShowWalletSettings] = useState(false);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -39,6 +41,11 @@ export default function Profile() {
   };
 
   const menuItems = [
+    {
+      icon: Wallet,
+      label: "Wallet Settings",
+      action: () => setShowWalletSettings(true),
+    },
     {
       icon: Settings,
       label: "Account Settings",
@@ -160,6 +167,11 @@ export default function Profile() {
       </div>
 
       <Navigation />
+      
+      {/* Wallet Settings Modal */}
+      {showWalletSettings && (
+        <WalletSettings onClose={() => setShowWalletSettings(false)} />
+      )}
     </div>
   );
 }

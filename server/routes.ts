@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { geminiService } from "./services/geminiService";
 import { razorpayService } from "./services/razorpayService";
+import { paytmService } from "./services/paytmService";
 import { insertBillSchema, insertBillItemSchema, insertFriendSchema, insertPaymentSchema } from "@shared/schema";
 import { z } from "zod";
 
@@ -32,6 +33,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching user balance:", error);
       res.status(500).json({ message: "Failed to fetch balance" });
+    }
+  });
+
+  // Paytm Wallet Integration
+  app.get("/api/wallet/balance", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const paytmBalance = await paytmService.getWalletBalance(userId);
+      res.json(paytmBalance);
+    } catch (error) {
+      console.error("Error fetching Paytm balance:", error);
+      res.status(500).json({ message: "Failed to fetch wallet balance" });
+    }
+  });
+
+  app.get("/api/wallet/transactions", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const transactions = await paytmService.getTransactionHistory(userId, limit);
+      res.json(transactions);
+    } catch (error) {
+      console.error("Error fetching wallet transactions:", error);
+      res.status(500).json({ message: "Failed to fetch transactions" });
+    }
+  });
+
+  app.post("/api/wallet/transfer", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const { recipientPhone, amount, purpose } = req.body;
+      
+      const transferRequest = {
+        recipientPhone,
+        amount: parseFloat(amount),
+        purpose: purpose || "Bill settlement",
+        orderId: `SPLIT_${Date.now()}`,
+      };
+
+      const result = await paytmService.transferMoney(transferRequest, userId);
+      res.json(result);
+    } catch (error) {
+      console.error("Error transferring money:", error);
+      res.status(500).json({ message: "Failed to transfer money" });
     }
   });
 
