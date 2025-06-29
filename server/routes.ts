@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated } from "./";
 import { geminiService } from "./services/geminiService";
 import { razorpayService } from "./services/razorpayService";
 import { paytmService } from "./services/paytmService";

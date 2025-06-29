@@ -1,10 +1,13 @@
 import 'dotenv/config';
-console.log("✅ .env loaded | REPLIT_CLIENT_ID:", process.env.REPLIT_CLIENT_ID);
+console.log("✅ .env loaded | GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
+
+import { setupAuth, isAuthenticated } from "./googleAuth"; //
+
 
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated } from "./";
 
 const app = express();
 app.use(express.json());
