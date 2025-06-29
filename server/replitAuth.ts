@@ -1,27 +1,27 @@
 import type { Express, RequestHandler } from "express";
 
-let setupAuth: (app: Express) => Promise<void> | void;
-let isAuthenticated: RequestHandler;
-
-if (
+const disableAuth =
   !process.env.REPLIT_DOMAINS ||
   !process.env.REPL_ID ||
-  !process.env.SESSION_SECRET
-) {
-  console.warn("⚠️ Replit Auth disabled — missing required env vars.");
+  !process.env.SESSION_SECRET;
 
-  // Dummy no-op versions for dev
-  setupAuth = (_app: Express) => {};
-  isAuthenticated = (_req, _res, next) => next();
-} else {
-  // Full secure auth setup
-  import * as client from "openid-client";
-  import { Strategy, type VerifyFunction } from "openid-client/passport";
-  import passport from "passport";
-  import session from "express-session";
-  import memoize from "memoizee";
-  import connectPg from "connect-pg-simple";
-  import { storage } from "./storage";
+if (disableAuth) {
+  console.warn("⚠️ Replit Auth disabled — missing REPLIT_DOMAINS / REPL_ID / SESSION_SECRET.");
+}
+
+// === DUMMY FALLBACKS FOR DEV ===
+let setupAuth: (app: Express) => Promise<void> | void = (_app: Express) => {};
+let isAuthenticated: RequestHandler = (_req, _res, next) => next();
+
+if (!disableAuth) {
+  // ✅ Only import heavy dependencies when needed
+  const client = await import("openid-client");
+  const { Strategy } = await import("openid-client/passport");
+  const passport = (await import("passport")).default;
+  const session = (await import("express-session")).default;
+  const memoize = (await import("memoizee")).default;
+  const connectPg = (await import("connect-pg-simple")).default;
+  const { storage } = await import("./storage");
 
   const getOidcConfig = memoize(async () => {
     return await client.discovery(
@@ -59,6 +59,7 @@ if (
       ttl: sessionTtl,
       tableName: "sessions",
     });
+
     return session({
       secret: process.env.SESSION_SECRET!,
       store: sessionStore,
@@ -80,9 +81,9 @@ if (
 
     const config = await getOidcConfig();
 
-    const verify: VerifyFunction = async (
-      tokens,
-      verified
+    const verify = async (
+      tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
+      verified: (err: any, user?: Express.User) => void
     ) => {
       const user = {};
       updateUserSession(user, tokens);
@@ -135,7 +136,7 @@ if (
   isAuthenticated = async (req, res, next) => {
     const user = req.user as any;
 
-    if (!req.isAuthenticated?.() || !user.expires_at) {
+    if (!req.isAuthenticated?.() || !user?.expires_at) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
@@ -146,8 +147,7 @@ if (
 
     const refreshToken = user.refresh_token;
     if (!refreshToken) {
-      res.status(401).json({ message: "Unauthorized" });
-      return;
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     try {
@@ -155,9 +155,8 @@ if (
       const tokenResponse = await client.refreshTokenGrant(config, refreshToken);
       updateUserSession(user, tokenResponse);
       return next();
-    } catch (error) {
-      res.status(401).json({ message: "Unauthorized" });
-      return;
+    } catch {
+      return res.status(401).json({ message: "Unauthorized" });
     }
   };
 }
