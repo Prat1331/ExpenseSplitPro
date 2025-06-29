@@ -1,12 +1,19 @@
 import type { Express, RequestHandler } from "express";
 import passport from "passport";
 import session from "express-session";
-import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import { Strategy as GoogleStrategy, Profile } from "passport-google-oauth20";
 
 const SESSION_SECRET = process.env.SESSION_SECRET!;
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
 const CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL!;
+
+interface AuthenticatedUser {
+  sub: string;
+  name: string;
+  email: string;
+  photo?: string;
+}
 
 export function setupAuth(app: Express) {
   app.use(
@@ -27,8 +34,15 @@ export function setupAuth(app: Express) {
         clientSecret: GOOGLE_CLIENT_SECRET,
         callbackURL: CALLBACK_URL,
       },
-      (accessToken, refreshToken, profile, done) => {
-        done(null, profile);
+      (accessToken, refreshToken, profile: Profile, done) => {
+        // ✅ Structure the user object for session
+        const user: AuthenticatedUser = {
+          sub: profile.id,
+          name: profile.displayName,
+          email: profile.emails?.[0]?.value || "",
+          photo: profile.photos?.[0]?.value,
+        };
+        done(null, user);
       }
     )
   );
@@ -37,20 +51,21 @@ export function setupAuth(app: Express) {
     done(null, user);
   });
 
-  passport.deserializeUser((obj: any, done) => {
+  passport.deserializeUser((obj: AuthenticatedUser, done) => {
     done(null, obj);
   });
 
-  // 🔐 Login
+  // 🔐 Google Login
   app.get("/api/login", passport.authenticate("google", { scope: ["profile", "email"] }));
 
-  // 🔄 Callback
+  // 🔄 Google OAuth Callback
   app.get(
     "/api/callback",
-    passport.authenticate("google", {
-      successRedirect: "/",
-      failureRedirect: "/api/login",
-    })
+    passport.authenticate("google", { failureRedirect: "/api/login" }),
+    (req, res) => {
+      // ✅ Redirect to frontend home/dashboard after successful login
+      res.redirect("http://localhost:5173"); // change to your frontend's port or domain
+    }
   );
 
   // 🚪 Logout
@@ -58,23 +73,25 @@ export function setupAuth(app: Express) {
     req.logout(() => res.redirect("/"));
   });
 
-  // ✅ Authenticated User Info
+  // 👤 Get Authenticated User
   app.get("/api/auth/user", (req, res) => {
-    if (!req.isAuthenticated || !req.isAuthenticated()) {
+    if (!req.isAuthenticated?.() || !req.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const user = req.user as any;
+    const user = req.user as AuthenticatedUser;
     res.json({
-      name: user.displayName,
-      email: user.emails?.[0]?.value,
-      photo: user.photos?.[0]?.value,
+      name: user.name,
+      email: user.email,
+      photo: user.photo,
+      sub: user.sub,
     });
   });
 }
 
-// ✅ Middleware to protect routes
+// 🔒 Auth Middleware
 export const isAuthenticated: RequestHandler = (req, res, next) => {
-  if (req.isAuthenticated && req.isAuthenticated()) return next();
+  const user = req.user as AuthenticatedUser;
+  if (req.isAuthenticated?.() && user?.sub) return next();
   res.status(401).json({ message: "Unauthorized" });
 };
