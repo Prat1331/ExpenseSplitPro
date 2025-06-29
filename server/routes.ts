@@ -1,12 +1,15 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./";
+
 import { geminiService } from "./services/geminiService";
 import { razorpayService } from "./services/razorpayService";
 import { paytmService } from "./services/paytmService";
 import { insertBillSchema, insertBillItemSchema, insertFriendSchema, insertPaymentSchema } from "@shared/schema";
 import { z } from "zod";
+
+// ✅ Add this
+import { isAuthenticated } from "./googleAuth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware
