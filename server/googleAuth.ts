@@ -16,6 +16,8 @@ interface AuthenticatedUser {
 }
 
 export function setupAuth(app: Express) {
+  console.log("✅ setupAuth() called: Registering auth routes");
+
   app.use(
     session({
       secret: SESSION_SECRET,
@@ -35,7 +37,6 @@ export function setupAuth(app: Express) {
         callbackURL: CALLBACK_URL,
       },
       (accessToken, refreshToken, profile: Profile, done) => {
-        // ✅ Structure the user object for session
         const user: AuthenticatedUser = {
           sub: profile.id,
           name: profile.displayName,
@@ -60,24 +61,18 @@ export function setupAuth(app: Express) {
 
   // 🔄 Google OAuth Callback
   app.get(
-  "/api/callback",
-  passport.authenticate("google", { failureRedirect: "/api/login" }),
-  (req, res) => {
-    res.redirect(process.env.FRONTEND_URL || "http://localhost:5173");
-  }
-);
+    "/api/callback",
+    passport.authenticate("google", { failureRedirect: "/api/login" }),
+    (req, res) => {
+      res.redirect(process.env.FRONTEND_URL || "http://localhost:5173");
+    }
+  );
 
   // 🚪 Logout
   app.get("/api/logout", (req, res) => {
     req.logout(() => res.redirect("/"));
   });
 
-  export function setupAuth(app: Express) {
-  console.log("✅ setupAuth() called: Registering auth routes");
-
-  app.get("/api/debug-auth", (_req, res) => {
-    res.send("✅ Auth routes are active");
-  });
   // 👤 Get Authenticated User
   app.get("/api/auth/user", (req, res) => {
     if (!req.isAuthenticated?.() || !req.user) {
@@ -91,6 +86,11 @@ export function setupAuth(app: Express) {
       photo: user.photo,
       sub: user.sub,
     });
+  });
+
+  // 🔍 Debug Route (Optional)
+  app.get("/api/debug-auth", (_req, res) => {
+    res.send("✅ Auth routes are active");
   });
 }
 
