@@ -1,23 +1,19 @@
-console.log("✅ DATABASE_URL:", process.env.DATABASE_URL);
-console.log("✅ GEMINI_API_KEY:", process.env.GEMINI_API_KEY);
-
-
-import cors from "cors"
-
 import 'dotenv/config';
-console.log("✅ .env loaded | GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
-
-import { setupAuth, isAuthenticated } from "./googleAuth"; //
-
-
 import express, { type Request, Response, NextFunction } from "express";
+import cors from "cors";
+import { setupAuth, isAuthenticated } from "./googleAuth";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
+console.log("✅ DATABASE_URL:", process.env.DATABASE_URL);
+console.log("✅ GEMINI_API_KEY:", process.env.GEMINI_API_KEY);
+console.log("✅ .env loaded | GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
+
+const app = express(); // ✅ Declare before using
 
 const allowedOrigins = [
-  "http://localhost:5173",                            // Development
-  "https://expencesplitpro.netlify.app",                // Replace with your actual Netlify site URL
+  "http://localhost:5173",                            
+  "https://expencesplitpro.netlify.app",              
 ];
 
 app.use(
@@ -35,6 +31,7 @@ app.use(
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
 
 
 app.use((req, res, next) => {
