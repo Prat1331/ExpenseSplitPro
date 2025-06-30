@@ -72,6 +72,12 @@ export function setupAuth(app: Express) {
     req.logout(() => res.redirect("/"));
   });
 
+  export function setupAuth(app: Express) {
+  console.log("✅ setupAuth() called: Registering auth routes");
+
+  app.get("/api/debug-auth", (_req, res) => {
+    res.send("✅ Auth routes are active");
+  });
   // 👤 Get Authenticated User
   app.get("/api/auth/user", (req, res) => {
     if (!req.isAuthenticated?.() || !req.user) {
