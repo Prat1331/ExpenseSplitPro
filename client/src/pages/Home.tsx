@@ -16,19 +16,21 @@ export default function Home() {
   const [showScanner, setShowScanner] = useState(false);
 
   // Redirect to login if not authenticated
-  useEffect(() => {
-    if (!authLoading && !user) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [user, authLoading, toast]);
+  // For example, in useEffect or a fetchUser function
+
+useEffect(() => {
+  fetch("https://expensesplitpro-production.up.railway.app/api/auth/user", {
+    method: "GET",
+    credentials: "include", // 👈 Send cookies/session info
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Unauthorized");
+      return res.json();
+    })
+    .then((user) => setUser(user))
+    .catch((err) => console.error(err));
+}, []);
+
 
   const { data: balance, isLoading: balanceLoading } = useQuery({
     queryKey: ["/api/users/balance"],
