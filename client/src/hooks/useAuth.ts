@@ -2,16 +2,14 @@ import { useQuery } from "@tanstack/react-query";
 
 export function useAuth() {
   const { data: user, isLoading } = useQuery({
-    queryKey: ["/api/auth/user"],
+    queryKey: ["auth-user"],
     queryFn: async () => {
-      const res = await fetch("http://localhost:5001/api/auth/user", {
-        credentials: "include", // ✅ send cookies
+      const res = await fetch("https://expensesplitpro-production.up.railway.app/api/auth/user", {
+        credentials: "include", // send cookies
       });
-
       if (!res.ok) {
-        throw new Error("Not authenticated");
+        throw new Error("Unauthorized");
       }
-
       return res.json();
     },
     retry: false,
