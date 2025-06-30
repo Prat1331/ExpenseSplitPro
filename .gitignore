@@ -1,7 +1,18 @@
+# Node dependencies
 node_modules
+
+# Build outputs
 dist
+
+# macOS system files
 .DS_Store
-server/public
-vite.config.ts.*
-*.tar.gz.env
+
+# Local environment variables
 .env
+
+# Other ignored files
+*.tar.gz
+vite.config.ts.*
+
+# Optional: ignore build artifacts or public assets from backend
+server/public
