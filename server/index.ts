@@ -11,11 +11,20 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 
 
-const app = express();
+const allowedOrigins = [
+  "http://localhost:5173",                            // Development
+  "https://expencesplitpro.netlify.app",                // Replace with your actual Netlify site URL
+];
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );

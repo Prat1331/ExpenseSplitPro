@@ -2,14 +2,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Receipt, Camera, Users, Smartphone, CreditCard, CheckCircle } from "lucide-react";
 
+
 export default function Landing() {
   const handleSignIn = () => {
-  window.location.href = "http://localhost:5001/api/login";
-};
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/login`;
+  };
 
-const handleGetStarted = () => {
-  window.location.href = "http://localhost:5001/api/login";
-};
+  const handleGetStarted = () => {
+    window.location.href = `${import.meta.env.VITE_API_URL}/api/login`;
+  };
+
 
 
   return (

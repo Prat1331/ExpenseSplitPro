@@ -60,13 +60,12 @@ export function setupAuth(app: Express) {
 
   // 🔄 Google OAuth Callback
   app.get(
-    "/api/callback",
-    passport.authenticate("google", { failureRedirect: "/api/login" }),
-    (req, res) => {
-      // ✅ Redirect to frontend home/dashboard after successful login
-      res.redirect("http://localhost:5173"); // change to your frontend's port or domain
-    }
-  );
+  "/api/callback",
+  passport.authenticate("google", { failureRedirect: "/api/login" }),
+  (req, res) => {
+    res.redirect(process.env.FRONTEND_URL || "http://localhost:5173");
+  }
+);
 
   // 🚪 Logout
   app.get("/api/logout", (req, res) => {
