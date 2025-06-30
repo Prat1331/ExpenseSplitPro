@@ -9,11 +9,11 @@ console.log("✅ DATABASE_URL:", process.env.DATABASE_URL);
 console.log("✅ GEMINI_API_KEY:", process.env.GEMINI_API_KEY);
 console.log("✅ .env loaded | GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID);
 
-const app = express(); // ✅ Declare before using
+const app = express(); // ✅ Initialize express first
 
 const allowedOrigins = [
-  "http://localhost:5173",                            
-  "https://expencesplitpro.netlify.app",              
+  "http://localhost:5173",
+  "https://expencesplitpro.netlify.app", // ✅ Update if frontend domain changes
 ];
 
 app.use(
@@ -32,12 +32,11 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-
-
+// ✅ Logging Middleware
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+  let capturedJsonResponse: Record<string, any> | undefined;
 
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
@@ -52,11 +51,9 @@ app.use((req, res, next) => {
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
-
       if (logLine.length > 80) {
         logLine = logLine.slice(0, 79) + "…";
       }
-
       log(logLine);
     }
   });
@@ -64,11 +61,10 @@ app.use((req, res, next) => {
   next();
 });
 
-(async () => {
-  // 🔐 Setup auth before routes
+// ✅ Server Boot Function (Avoid top-level await for esbuild)
+async function startServer() {
   await setupAuth(app);
 
-  // 🔒 Protected route using isAuthenticated middleware
   app.get("/api/protected", isAuthenticated, (req, res) => {
     res.send("Secret Data");
   });
@@ -79,7 +75,7 @@ app.use((req, res, next) => {
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
     res.status(status).json({ message });
-    throw err;
+    console.error("❌ Server Error:", err);
   });
 
   if (app.get("env") === "development") {
@@ -92,4 +88,9 @@ app.use((req, res, next) => {
   server.listen({ port, host: "0.0.0.0", reusePort: true }, () => {
     log(`✅ Server running on port ${port}`);
   });
-})();
+}
+
+// ✅ Start the server
+startServer().catch((err) => {
+  console.error("❌ Failed to start server:", err);
+});
