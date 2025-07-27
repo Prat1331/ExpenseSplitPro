@@ -24,6 +24,7 @@ app.use(
     credentials: true,
   })
 );
+console.log("✅ CORS middleware configured with allowed origins:", allowedOrigins);
 
 
 app.use(express.json());
@@ -84,6 +85,7 @@ async function startServer() {
   const port = process.env.PORT || 5001;
   server.listen({ port, host: "0.0.0.0", reusePort: true }, () => {
     log(`✅ Server running on port ${port}`);
+    console.log("✅ Express server started and listening!");
   });
 }
 
