@@ -50,7 +50,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <div className="mobile-container">
+        <div className="w-full min-h-screen bg-white">
           <Toaster />
           <Router />
         </div>
