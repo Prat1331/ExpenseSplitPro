@@ -12,13 +12,15 @@ console.log("✅ .env loaded | GOOGLE_CLIENT_ID:", process.env.GOOGLE_CLIENT_ID)
 const app = express(); // ✅ Initialize express first
 
 const allowedOrigins = [
+  "http://localhost:5001",
   "http://localhost:5173",
-  "https://expencesplitpro.netlify.app", // ✅ Update if frontend domain changes
+  "https://expencesplitpro.netlify.app",
+  "https://expensesplitpro-production.up.railway.app"
 ];
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://expencesplitpro.netlify.app"],
+    origin: allowedOrigins,
     credentials: true,
   })
 );
