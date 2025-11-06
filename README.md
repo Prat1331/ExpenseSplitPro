@@ -1,98 +1,177 @@
-💸 ExpenseSplitPro
-Smart expense splitting made easy — just click a bill or scan a QR code and split payments with your friends!
+# 💸 ExpenseSplitPro
 
-🚀 Overview
-ExpenseSplitPro is a full-stack web application that simplifies expense management among friends. You can:
+**Smart expense splitting made easy — just click a bill or scan a QR code and split payments with your friends!**
 
-📸 Click a picture of a bill or scan a QR code
+---
 
-🤝 Split the amount automatically with added friends
+## 🚀 Overview
 
-🔐 Use secure login/signup functionality
+**ExpenseSplitPro** is a full-stack web application that simplifies expense management among friends. Whether you're dining out or traveling, the app lets you:
 
-💳 Pay and settle bills via Razorpay integration
+* 📸 Capture or upload a bill using OCR
+* 🤝 Split the amount automatically with added friends
+* 🔐 Log in securely with JWT authentication
+* 💳 Pay and settle bills via Razorpay integration
+* 📱 Add friends via phone number (securely accessing contacts)
+* ☁️ Host and store data on **AWS Cloud** for scalability
 
-📱 Add friends by phone number (accesses your contact list securely)
+---
 
-Whether you're dining out or planning a trip, ExpenseSplitPro helps you split the bill without the headache.
+## 🧠 Features
 
-🧠 Features
-✅ Smart OCR Bill Scanning
-
+✅ Smart OCR Bill Scanning (Tesseract.js + Multer)
 ✅ QR Code Payment Splitting
-
 ✅ Secure Login & Signup
-
 ✅ Friend Management via Phone Number
-
-✅ Razorpay Payment Integration
-
+✅ Razorpay Payment Gateway Integration
 ✅ Real-time Notifications & Expense Tracking
-
 ✅ Fully Responsive Frontend (React + Tailwind)
+✅ Deployed and Monitored on **AWS EC2 + S3 + CloudWatch**
+✅ Dockerized for Scalable Deployment
 
-🛠️ Tech Stack
-Frontend:
+---
 
-React (Vite)
+## 🛠️ Tech Stack
 
-Tailwind CSS
+### **Frontend**
 
-React Query
+* React (Vite)
+* Tailwind CSS
+* React Query
+* Wouter (Routing)
 
-Wouter (Routing)
+### **Backend**
 
-Backend:
+* Node.js + Express
+* MongoDB (Mongoose ORM)
+* JWT Authentication
+* Razorpay API
+* Multer / Tesseract.js (for image and QR processing)
 
-Node.js + Express
+### **DevOps & Cloud**
 
-MongoDB
+* AWS EC2 (Backend Deployment)
+* AWS S3 (Bill Image Storage)
+* Docker (Containerized Backend)
+* AWS CLI (Automation)
+* Linux (Ubuntu Instance)
+* Git + GitHub (Version Control)
+* PM2 (Node Process Manager)
 
-JWT Authentication
+---
 
-Razorpay API
+## ☁️ Cloud & DevOps Integration
 
-Multer / Tesseract.js (for image/QR processing)
+### **AWS EC2 Deployment**
 
-Deployment:
+* Deployed backend on AWS EC2 (Ubuntu) using Linux terminal and AWS CLI.
+* Configured security groups and SSH access for Node.js server.
+* Used **PM2** to maintain uptime and process management.
 
-Railway (Backend): https://expensesplitpro-production.up.railway.app
+### **AWS S3 for Storage**
 
-Vercel/Netlify (Frontend): [Add your deployed frontend link]
+* Integrated AWS S3 to store uploaded bill images securely.
+* Configured IAM user with least-privilege access for file uploads.
 
-📦 Setup Instructions
-1. Clone the Repository
-bash
-Copy
-Edit
-git clone https://github.com/yourusername/ExpenseSplitPro.git
+### **Dockerization**
+
+* Built a Dockerfile for the backend and ran the app inside a container for easy deployment.
+* Published the image to Docker Hub for reusability.
+
+### **Git & GitHub**
+
+* Followed a feature-branch workflow (`feature/aws-deployment`) with commits and pull requests.
+* Managed project updates through GitHub Actions and CI/CD readiness.
+
+---
+
+## ⚙️ Setup Instructions
+
+### **Clone the Repository**
+
+```bash
+git clone https://github.com/Prat1331/ExpenseSplitPro.git
 cd ExpenseSplitPro
-2. Setup Frontend
-bash
-Copy
-Edit
+```
+
+### **Frontend Setup**
+
+```bash
 cd client
 npm install
 npm run dev
-3. Setup Backend
-bash
-Copy
-Edit
+```
+
+### **Backend Setup**
+
+```bash
 cd server
 npm install
-# Add your .env file here with Razorpay keys and Mongo URI
+```
+
+Add your `.env` file (see below), then run:
+
+```bash
 npm run dev
-4. Environment Variables (.env example)
-ini
-Copy
-Edit
+```
+
+---
+
+## 🔑 Environment Variables
+
+Create a `.env` file inside the **server/** folder with the following values:
+
+```ini
 PORT=5000
 MONGO_URI=your_mongo_connection_string
 RAZORPAY_KEY_ID=your_key_id
 RAZORPAY_SECRET=your_secret
 JWT_SECRET=your_jwt_secret
-🔐 Razorpay Test Credentials
-If you're contributing or testing, use Razorpay's test credentials.
+AWS_ACCESS_KEY_ID=your_aws_access_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+S3_BUCKET_NAME=expensesplitpro-bills
+AWS_REGION=ap-south-1
+```
+
+---
+
+## 🧰 Docker Setup
+
+```bash
+# Build Docker image
+docker build -t expensesplitpro-backend .
+
+# Run container
+docker run -p 5000:5000 expensesplitpro-backend
+```
+
+(Optional) Push to Docker Hub:
+
+```bash
+docker tag expensesplitpro-backend prat1331/expensesplitpro
+docker push prat1331/expensesplitpro
+```
+
+---
+
+## 🌍 Deployment Links
+
+**Backend (Railway / AWS EC2):** [https://expensesplitpro-production.up.railway.app](https://expensesplitpro-production.up.railway.app)
+**Frontend (Vercel/Netlify):** [Add your deployed frontend link here]
+
+---
+
+## 📈 Future Enhancements
+
+* 🔄 Add expense groups with automatic sharing logic
+* 📊 Dashboard analytics for spending trends
+* ☁️ Implement AWS CloudTrail for audit logging
+* 💬 Integrate real-time chat using WebSockets
+
+---
+
+
+
 
 📸 Demo
 ![Screenshot 2025-06-29 193216](https://github.com/user-attachments/assets/6fde90c5-f550-40e3-82c8-214328fa75c2)
@@ -103,17 +182,19 @@ If you're contributing or testing, use Razorpay's test credentials.
 
 
 
-📌 TODOs
- Group Expense Support
+## 👨‍💻 Author
 
- OCR Accuracy Improvements
+**Pratham Gera**
 
- Email Notifications
+* 🌐 [LinkedIn](https://linkedin.com/in/pratham-gera-0b3002252)
+* 💻 [GitHub](https://github.com/Prat1331)
+* ✉️ [pratham13.gera@gmail.com](mailto:pratham13.gera@gmail.com)
 
- PWA Support for Offline Splits
+---
 
-🤝 Contributing
-Pull requests are welcome! For major changes, please open an issue first to discuss what you'd like to change.
+### ⭐ If you like this project, consider giving it a star on GitHub!
+
+> *ExpenseSplitPro – Simplifying shared expenses, powered by AI and Cloud.*
 
 📄 License
 This project is licensed under the MIT License.
